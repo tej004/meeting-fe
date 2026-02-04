@@ -4,8 +4,8 @@ import type { TUserStore } from '@/types/types/store/user.store';
 import { userStoreDafaultState } from '../defaults/user-store.defaults';
 
 export const userStoreActions = (
-  set: Parameters<StateCreator<TUserStore>>[0],
-  get: Parameters<StateCreator<TUserStore>>[1]
+  set: Parameters<StateCreator<TUserStore>>[0]
+  // get: Parameters<StateCreator<TUserStore>>[1]
 ) => ({
   login: (data: IUserStoreState) => {
     set(() => ({ ...data }));

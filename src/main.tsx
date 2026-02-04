@@ -1,4 +1,4 @@
-import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { createRouter, Navigate, RouterProvider } from '@tanstack/react-router';
 import ReactDOM from 'react-dom/client';
 
 // Import the generated route tree
@@ -16,6 +16,7 @@ const router = createRouter({
   scrollRestoration: true,
   defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
+  defaultNotFoundComponent: () => <Navigate to="/404" replace />,
 });
 
 declare module '@tanstack/react-router' {
@@ -26,6 +27,8 @@ declare module '@tanstack/react-router' {
 const queryClient = new QueryClient();
 
 const rootElement = document.getElementById('app');
+document.documentElement.classList.add('dark');
+
 if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(

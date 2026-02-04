@@ -9,10 +9,24 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as R404RouteImport } from './routes/404'
+import { Route as R401RouteImport } from './routes/401'
 import { Route as authenticatedRouteRouteImport } from './routes/(authenticated)/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PublicSignUpRouteImport } from './routes/public/sign-up'
+import { Route as authenticatedViewerIndexRouteImport } from './routes/(authenticated)/viewer/index'
+import { Route as PublicRedirectsRoomRoomIdRouteImport } from './routes/public/redirects/room/$roomId'
 
+const R404Route = R404RouteImport.update({
+  id: '/404',
+  path: '/404',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const R401Route = R401RouteImport.update({
+  id: '/401',
+  path: '/401',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const authenticatedRouteRoute = authenticatedRouteRouteImport.update({
   id: '/(authenticated)',
   getParentRoute: () => rootRouteImport,
@@ -27,37 +41,98 @@ const PublicSignUpRoute = PublicSignUpRouteImport.update({
   path: '/public/sign-up',
   getParentRoute: () => rootRouteImport,
 } as any)
+const authenticatedViewerIndexRoute =
+  authenticatedViewerIndexRouteImport.update({
+    id: '/viewer/',
+    path: '/viewer/',
+    getParentRoute: () => authenticatedRouteRoute,
+  } as any)
+const PublicRedirectsRoomRoomIdRoute =
+  PublicRedirectsRoomRoomIdRouteImport.update({
+    id: '/public/redirects/room/$roomId',
+    path: '/public/redirects/room/$roomId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/401': typeof R401Route
+  '/404': typeof R404Route
   '/public/sign-up': typeof PublicSignUpRoute
+  '/viewer': typeof authenticatedViewerIndexRoute
+  '/public/redirects/room/$roomId': typeof PublicRedirectsRoomRoomIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/401': typeof R401Route
+  '/404': typeof R404Route
   '/public/sign-up': typeof PublicSignUpRoute
+  '/viewer': typeof authenticatedViewerIndexRoute
+  '/public/redirects/room/$roomId': typeof PublicRedirectsRoomRoomIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/(authenticated)': typeof authenticatedRouteRoute
+  '/(authenticated)': typeof authenticatedRouteRouteWithChildren
+  '/401': typeof R401Route
+  '/404': typeof R404Route
   '/public/sign-up': typeof PublicSignUpRoute
+  '/(authenticated)/viewer/': typeof authenticatedViewerIndexRoute
+  '/public/redirects/room/$roomId': typeof PublicRedirectsRoomRoomIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/public/sign-up'
+  fullPaths:
+    | '/'
+    | '/401'
+    | '/404'
+    | '/public/sign-up'
+    | '/viewer'
+    | '/public/redirects/room/$roomId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/public/sign-up'
-  id: '__root__' | '/' | '/(authenticated)' | '/public/sign-up'
+  to:
+    | '/'
+    | '/401'
+    | '/404'
+    | '/public/sign-up'
+    | '/viewer'
+    | '/public/redirects/room/$roomId'
+  id:
+    | '__root__'
+    | '/'
+    | '/(authenticated)'
+    | '/401'
+    | '/404'
+    | '/public/sign-up'
+    | '/(authenticated)/viewer/'
+    | '/public/redirects/room/$roomId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  authenticatedRouteRoute: typeof authenticatedRouteRoute
+  authenticatedRouteRoute: typeof authenticatedRouteRouteWithChildren
+  R401Route: typeof R401Route
+  R404Route: typeof R404Route
   PublicSignUpRoute: typeof PublicSignUpRoute
+  PublicRedirectsRoomRoomIdRoute: typeof PublicRedirectsRoomRoomIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/404': {
+      id: '/404'
+      path: '/404'
+      fullPath: '/404'
+      preLoaderRoute: typeof R404RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/401': {
+      id: '/401'
+      path: '/401'
+      fullPath: '/401'
+      preLoaderRoute: typeof R401RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(authenticated)': {
       id: '/(authenticated)'
       path: ''
@@ -79,13 +154,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicSignUpRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(authenticated)/viewer/': {
+      id: '/(authenticated)/viewer/'
+      path: '/viewer'
+      fullPath: '/viewer'
+      preLoaderRoute: typeof authenticatedViewerIndexRouteImport
+      parentRoute: typeof authenticatedRouteRoute
+    }
+    '/public/redirects/room/$roomId': {
+      id: '/public/redirects/room/$roomId'
+      path: '/public/redirects/room/$roomId'
+      fullPath: '/public/redirects/room/$roomId'
+      preLoaderRoute: typeof PublicRedirectsRoomRoomIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface authenticatedRouteRouteChildren {
+  authenticatedViewerIndexRoute: typeof authenticatedViewerIndexRoute
+}
+
+const authenticatedRouteRouteChildren: authenticatedRouteRouteChildren = {
+  authenticatedViewerIndexRoute: authenticatedViewerIndexRoute,
+}
+
+const authenticatedRouteRouteWithChildren =
+  authenticatedRouteRoute._addFileChildren(authenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  authenticatedRouteRoute: authenticatedRouteRoute,
+  authenticatedRouteRoute: authenticatedRouteRouteWithChildren,
+  R401Route: R401Route,
+  R404Route: R404Route,
   PublicSignUpRoute: PublicSignUpRoute,
+  PublicRedirectsRoomRoomIdRoute: PublicRedirectsRoomRoomIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

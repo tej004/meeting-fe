@@ -1,7 +1,9 @@
 export interface IUserStoreState {
-  uuid: string;
-  isAuthenticated: boolean;
-  username: string;
+  auth: {
+    isAuthenticated: boolean;
+    accessToken: string;
+  };
+  user: any;
 }
 
 export interface IUserStoreActions {
