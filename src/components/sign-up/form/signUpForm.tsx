@@ -55,7 +55,7 @@ const SignUpForm = ({ className, ...props }: React.ComponentProps<'form'>) => {
       });
       navigate({ to: '/' });
     } catch (err: any) {
-      setError(err.message || 'Sign up failed');
+      setError(err?.response?.data?.message || 'Sign up failed');
     } finally {
       setLoading(false);
     }
